@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🎭 Emotion Classifier</title>
+  <title>🎭 Emotion Classification</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     * {
@@ -86,10 +86,6 @@
       margin-top: 8px;
     }
 
-    canvas {
-      margin-top: 40px;
-    }
-
     footer {
       margin-top: 40px;
       font-size: 0.9rem;
@@ -120,49 +116,10 @@
     </div>
     {% endif %}
 
-    {% if trend %}
-    <canvas id="trendChart" width="400" height="200"></canvas>
-    {% endif %}
-
     <footer>
       Built with ❤️ using Flask and ML
     </footer>
   </div>
-
-  {% if trend %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const ctx = document.getElementById('trendChart')?.getContext('2d');
-    if (ctx) {
-      const chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: {{ trend.keys() | list }},
-          datasets: [{
-            label: 'Emotion Frequency',
-            data: {{ trend.values() | list }},
-            backgroundColor: [
-              'rgba(255, 206, 86, 0.7)',   // joy
-              'rgba(54, 162, 235, 0.7)',   // sad
-              'rgba(255, 99, 132, 0.7)',   // anger
-              'rgba(75, 192, 192, 0.7)',   // fear
-              'rgba(255, 159, 64, 0.7)',   // love
-              'rgba(153, 102, 255, 0.7)'   // suprise
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-  </script>
-  {% endif %}
 </body>
 </html>
 
