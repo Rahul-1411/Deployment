@@ -14,10 +14,11 @@
 
     body {
       background: linear-gradient(to right, #89f7fe, #66a6ff);
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 20px;
     }
 
     .container {
@@ -26,7 +27,7 @@
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       width: 90%;
-      max-width: 600px;
+      max-width: 700px;
       text-align: center;
     }
 
@@ -79,20 +80,30 @@
       margin-left: 10px;
     }
 
+    .confidence {
+      font-size: 14px;
+      color: gray;
+      margin-top: 8px;
+    }
+
+    canvas {
+      margin-top: 40px;
+    }
+
     footer {
       margin-top: 40px;
       font-size: 0.9rem;
       color: #888;
     }
-
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎭 Emotion Classification</h1>
     <p>Type a sentence below and find out the predicted emotion.</p>
+
     <form method="POST">
-      <textarea name="text" placeholder="Example: I love my family. 💖"></textarea><br>
+      <textarea name="text" placeholder="Example: I love my family. 💖">{{ text }}</textarea><br>
       <input type="submit" value="🔍 Predict Emotion">
     </form>
 
@@ -100,13 +111,59 @@
     <div class="result">
       <strong>Prediction:</strong> {{ prediction.capitalize() }}
       <span class="emoji">{{ emoji }}</span>
+
+      {% if confidence is not none %}
+      <div class="confidence">
+        Confidence: {{ confidence }}%
+      </div>
+      {% endif %}
     </div>
+    {% endif %}
+
+    {% if trend %}
+    <canvas id="trendChart" width="400" height="200"></canvas>
     {% endif %}
 
     <footer>
       Built with ❤️ using Flask and ML
     </footer>
   </div>
+
+  {% if trend %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('trendChart')?.getContext('2d');
+    if (ctx) {
+      const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ trend.keys() | list }},
+          datasets: [{
+            label: 'Emotion Frequency',
+            data: {{ trend.values() | list }},
+            backgroundColor: [
+              'rgba(255, 206, 86, 0.7)',   // joy
+              'rgba(54, 162, 235, 0.7)',   // sad
+              'rgba(255, 99, 132, 0.7)',   // anger
+              'rgba(75, 192, 192, 0.7)',   // fear
+              'rgba(255, 159, 64, 0.7)',   // love
+              'rgba(153, 102, 255, 0.7)'   // suprise
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  </script>
+  {% endif %}
 </body>
 </html>
+
 
